@@ -14,6 +14,7 @@ New terminal
 
 cd frontend
 
-npm install
+npm install (first time)
 
 npm start
+
