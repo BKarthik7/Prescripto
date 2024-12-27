@@ -41,14 +41,6 @@ const MyAppointments = () => {
     
   }
 
-
-
-  useEffect(() => {
-    if (token) {
-      getUserAppointments()
-    }
-  }, [token])
-
   return (
     <div>
       <p className='pb-3 mt-12 text-lg font-medium text-gray-600 border-b'>My appointments</p>
