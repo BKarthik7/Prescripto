@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { assets } from '../assets/assets_frontend/assets'
+import { assets } from '../assets/assets'
 
 const MyAppointments = () => {
 
