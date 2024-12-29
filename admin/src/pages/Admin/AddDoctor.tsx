@@ -3,6 +3,7 @@ import { assets } from '../../assets/assets'
 import { toast } from 'react-toastify'
 import axios from 'axios'
 import { AdminContext } from '../../context/AdminContext'
+import { AppContext } from '../../context/AppContext'
 
 const AddDoctor = () => {
 
@@ -18,7 +19,8 @@ const AddDoctor = () => {
     const [address1, setAddress1] = useState('')
     const [address2, setAddress2] = useState('')
 
-    const { aToken, backendUrl } = useContext(AdminContext)
+    const { backendUrl } = useContext(AppContext)
+    const { aToken } = useContext(AdminContext)
 
     const onSubmitHandler = async (event) => {
         event.preventDefault()
