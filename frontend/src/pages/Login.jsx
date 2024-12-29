@@ -1,4 +1,8 @@
-import React, { useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
+import { AppContext } from '../context/AppContext'
+import axios from 'axios'
+import { toast } from 'react-toastify'
+import { useNavigate } from 'react-router-dom'
 
 const Login = () => {
 
@@ -8,12 +12,46 @@ const Login = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
+  const navigate = useNavigate()
+  const { backendUrl, token, setToken } = useContext(AppContext)
+
   const onSubmitHandler = async (event) => {
     event.preventDefault();
+
+    if (state === 'Sign Up') {
+
+      const { data } = await axios.post(backendUrl + '/api/user/register', { name, email, password })
+
+      if (data.success) {
+        localStorage.setItem('token', data.token)
+        setToken(data.token)
+      } else {
+        toast.error(data.message)
+      }
+
+    } else {
+
+      const { data } = await axios.post(backendUrl + '/api/user/login', { email, password })
+
+      if (data.success) {
+        localStorage.setItem('token', data.token)
+        setToken(data.token)
+      } else {
+        toast.error(data.message)
+      }
+
+    }
+
   }
-  
+
+  useEffect(() => {
+    if (token) {
+      navigate('/')
+    }
+  }, [token])
+
   return (
-    <form className='min-h-[80vh] flex items-center'>
+    <form onSubmit={onSubmitHandler} className='min-h-[80vh] flex items-center'>
       <div className='flex flex-col gap-3 m-auto items-start p-8 min-w-[340px] sm:min-w-96 border rounded-xl text-[#5E5E5E] text-sm shadow-lg'>
         <p className='text-2xl font-semibold'>{state === 'Sign Up' ? 'Create Account' : 'Login'}</p>
         <p>Please {state === 'Sign Up' ? 'sign up' : 'log in'} to book appointment</p>
@@ -39,7 +77,6 @@ const Login = () => {
         }
       </div>
     </form>
-
   )
 }
 
