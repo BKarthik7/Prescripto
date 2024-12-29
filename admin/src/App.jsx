@@ -1,4 +1,5 @@
 import React, { useContext } from 'react'
+import { DoctorContext } from './context/DoctorContext';
 import { AdminContext } from './context/AdminContext';
 import { Route, Routes } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify';
@@ -16,9 +17,10 @@ import DoctorProfile from './pages/Doctor/DoctorProfile';
 
 const App = () => {
 
+  const { dToken } = useContext(DoctorContext)
   const { aToken } = useContext(AdminContext)
 
-  return aToken ? (
+  return dToken || aToken ? (
     <div className='bg-[#F8F9FD]'>
       <ToastContainer />
       <Navbar />

@@ -1,108 +1,80 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React from 'react'
+import { useContext } from 'react'
+import { useEffect } from 'react'
 import { DoctorContext } from '../../context/DoctorContext'
+import { assets } from '../../assets/assets'
 import { AppContext } from '../../context/AppContext'
-import { toast } from 'react-toastify'
-import axios from 'axios'
 
-const DoctorProfile = () => {
+const DoctorDashboard = () => {
 
-    const { dToken, profileData, setProfileData, getProfileData } = useContext(DoctorContext)
-    const { currency, backendUrl } = useContext(AppContext)
-    const [isEdit, setIsEdit] = useState(false)
+  const { dToken, dashData, getDashData, cancelAppointment, completeAppointment } = useContext(DoctorContext)
+  const { slotDateFormat, currency } = useContext(AppContext)
 
-    const updateProfile = async () => {
 
-        try {
+  useEffect(() => {
 
-            const updateData = {
-                address: profileData.address,
-                fees: profileData.fees,
-                about: profileData.about,
-                available: profileData.available
-            }
-
-            const { data } = await axios.post(backendUrl + '/api/doctor/update-profile', updateData, { headers: { dToken } })
-
-            if (data.success) {
-                toast.success(data.message)
-                setIsEdit(false)
-                getProfileData()
-            } else {
-                toast.error(data.message)
-            }
-
-            setIsEdit(false)
-
-        } catch (error) {
-            toast.error(error.message)
-            console.log(error)
-        }
-
+    if (dToken) {
+      getDashData()
     }
 
-    useEffect(() => {
-        if (dToken) {
-            getProfileData()
-        }
-    }, [dToken])
+  }, [dToken])
 
-    return profileData && (
-        <div>
-            <div className='flex flex-col gap-4 m-5'>
-                <div>
-                    <img className='bg-primary/80 w-full sm:max-w-64 rounded-lg' src={profileData.image} alt="" />
-                </div>
+  return dashData && (
+    <div className='m-5'>
 
-                <div className='flex-1 border border-stone-100 rounded-lg p-8 py-7 bg-white'>
-
-                    {/* ----- Doc Info : name, degree, experience ----- */}
-
-                    <p className='flex items-center gap-2 text-3xl font-medium text-gray-700'>{profileData.name}</p>
-                    <div className='flex items-center gap-2 mt-1 text-gray-600'>
-                        <p>{profileData.degree} - {profileData.speciality}</p>
-                        <button className='py-0.5 px-2 border text-xs rounded-full'>{profileData.experience}</button>
-                    </div>
-
-                    {/* ----- Doc About ----- */}
-                    <div>
-                        <p className='flex items-center gap-1 text-sm font-medium text-[#262626] mt-3'>About :</p>
-                        <p className='text-sm text-gray-600 max-w-[700px] mt-1'>
-                            {
-                                isEdit
-                                    ? <textarea onChange={(e) => setProfileData(prev => ({ ...prev, about: e.target.value }))} type='text' className='w-full outline-primary p-2' rows={8} value={profileData.about} />
-                                    : profileData.about
-                            }
-                        </p>
-                    </div>
-
-                    <p className='text-gray-600 font-medium mt-4'>
-                        Appointment fee: <span className='text-gray-800'>{currency} {isEdit ? <input type='number' onChange={(e) => setProfileData(prev => ({ ...prev, fees: e.target.value }))} value={profileData.fees} /> : profileData.fees}</span>
-                    </p>
-
-                    <div className='flex gap-2 py-2'>
-                        <p>Address:</p>
-                        <p className='text-sm'>
-                            {isEdit ? <input type='text' onChange={(e) => setProfileData(prev => ({ ...prev, address: { ...prev.address, line1: e.target.value } }))} value={profileData.address.line1} /> : profileData.address.line1}
-                            <br />
-                            {isEdit ? <input type='text' onChange={(e) => setProfileData(prev => ({ ...prev, address: { ...prev.address, line2: e.target.value } }))} value={profileData.address.line2} /> : profileData.address.line2}
-                        </p>
-                    </div>
-
-                    <div className='flex gap-1 pt-2'>
-                        <input type="checkbox" onChange={() => isEdit && setProfileData(prev => ({ ...prev, available: !prev.available }))} checked={profileData.available} />
-                        <label htmlFor="">Available</label>
-                    </div>
-
-                    {
-                        isEdit
-                            ? <button onClick={updateProfile} className='px-4 py-1 border border-primary text-sm rounded-full mt-5 hover:bg-primary hover:text-white transition-all'>Save</button>
-                            : <button onClick={() => setIsEdit(prev => !prev)} className='px-4 py-1 border border-primary text-sm rounded-full mt-5 hover:bg-primary hover:text-white transition-all'>Edit</button>
-                    }
-
-                </div>
-            </div>
+      <div className='flex flex-wrap gap-3'>
+        <div className='flex items-center gap-2 bg-white p-4 min-w-52 rounded border-2 border-gray-100 cursor-pointer hover:scale-105 transition-all'>
+          <img className='w-14' src={assets.earning_icon} alt="" />
+          <div>
+            <p className='text-xl font-semibold text-gray-600'>{currency} {dashData.earnings}</p>
+            <p className='text-gray-400'>Earnings</p>
+          </div>
         </div>
-    )
+        <div className='flex items-center gap-2 bg-white p-4 min-w-52 rounded border-2 border-gray-100 cursor-pointer hover:scale-105 transition-all'>
+          <img className='w-14' src={assets.appointments_icon} alt="" />
+          <div>
+            <p className='text-xl font-semibold text-gray-600'>{dashData.appointments}</p>
+            <p className='text-gray-400'>Appointments</p>
+          </div>
+        </div>
+        <div className='flex items-center gap-2 bg-white p-4 min-w-52 rounded border-2 border-gray-100 cursor-pointer hover:scale-105 transition-all'>
+          <img className='w-14' src={assets.patients_icon} alt="" />
+          <div>
+            <p className='text-xl font-semibold text-gray-600'>{dashData.patients}</p>
+            <p className='text-gray-400'>Patients</p></div>
+        </div>
+      </div>
+
+      <div className='bg-white'>
+        <div className='flex items-center gap-2.5 px-4 py-4 mt-10 rounded-t border'>
+          <img src={assets.list_icon} alt="" />
+          <p className='font-semibold'>Latest Bookings</p>
+        </div>
+
+        <div className='pt-4 border border-t-0'>
+          {dashData.latestAppointments.slice(0, 5).map((item, index) => (
+            <div className='flex items-center px-6 py-3 gap-3 hover:bg-gray-100' key={index}>
+              <img className='rounded-full w-10' src={item.userData.image} alt="" />
+              <div className='flex-1 text-sm'>
+                <p className='text-gray-800 font-medium'>{item.userData.name}</p>
+                <p className='text-gray-600 '>Booking on {slotDateFormat(item.slotDate)}</p>
+              </div>
+              {item.cancelled
+                ? <p className='text-red-400 text-xs font-medium'>Cancelled</p>
+                : item.isCompleted
+                  ? <p className='text-green-500 text-xs font-medium'>Completed</p>
+                  : <div className='flex'>
+                    <img onClick={() => cancelAppointment(item._id)} className='w-10 cursor-pointer' src={assets.cancel_icon} alt="" />
+                    <img onClick={() => completeAppointment(item._id)} className='w-10 cursor-pointer' src={assets.tick_icon} alt="" />
+                  </div>
+              }
+            </div>
+          ))}
+        </div>
+      </div>
+
+    </div>
+  )
 }
 
-export default DoctorProfile
+export default DoctorDashboard
