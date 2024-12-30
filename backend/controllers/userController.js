@@ -4,6 +4,7 @@ import validator from "validator";
 import userModel from "../models/userModel.js";
 import doctorModel from "../models/doctorModel.js";
 import appointmentModel from "../models/appointmentModel.js";
+import fs from 'fs'
 import { v2 as cloudinary } from 'cloudinary'
 import stripe from "stripe";
 import razorpay from 'razorpay';
@@ -129,6 +130,82 @@ const updateProfile = async (req, res) => {
         res.json({ success: false, message: error.message })
     }
 }
+
+// API to get user reports from user data
+const getReports = async (req, res) => {
+    try {
+        const { userId } = req.params;  // Using params to get the userId in case it's passed in URL
+
+        if (!userId) {
+            return res.status(400).json({ success: false, message: "User ID is required" });
+        }
+
+        // Assuming `reports` is an array field in userModel
+        const user = await userModel.findById(userId).select('reports');
+
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
+
+        // If there are no reports, respond with an empty array
+        const reports = user.reports || [];
+
+        res.json({ success: true, reports });
+
+    } catch (error) {
+        console.error("Error fetching user reports:", error);
+        res.status(500).json({ success: false, message: "Internal server error" });
+    }
+}
+
+// API to upload user reports to cloudinary and save in user data
+const uploadReport = async (req, res) => {
+    try {
+        const { userId } = req.body;
+        const reportFile = req.file;
+
+        if (!userId || !reportFile) {
+            return res.status(400).json({ success: false, message: "User ID and report file are required" });
+        }
+
+        // Generate a unique folder path for the user
+        const userFolder = `user_reports/${userId}`;
+
+        // Upload the report file to Cloudinary
+        const reportUpload = await cloudinary.uploader.upload(reportFile.path, {
+            resource_type: "raw",  // For documents like PDF or Word
+            folder: userFolder,    // Unique folder for each user
+        });
+
+        // Clean up the temporary file
+        fs.unlinkSync(reportFile.path);  // This will delete the local file after upload
+
+        const reportURL = reportUpload.secure_url;
+
+        // Update the user's data with the new report URL
+        const updatedUser = await userModel.findByIdAndUpdate(
+            userId,
+            { $push: { reports: reportURL } },  // Add to the reports array
+            { new: true }  // Return the updated user object
+        );
+
+        if (!updatedUser) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
+
+        res.json({ success: true, message: "Report uploaded successfully", reportURL });
+
+    } catch (error) {
+        console.error("Error uploading report:", error);
+
+        // Handle file clean-up if an error occurs during Cloudinary upload
+        if (req.file) {
+            fs.unlinkSync(req.file.path);
+        }
+
+        res.status(500).json({ success: false, message: "Internal server error" });
+    }
+};
 
 // API to book appointment 
 const bookAppointment = async (req, res) => {
@@ -348,6 +425,8 @@ export {
     registerUser,
     getProfile,
     updateProfile,
+    getReports,
+    uploadReport,
     bookAppointment,
     listAppointment,
     cancelAppointment,
