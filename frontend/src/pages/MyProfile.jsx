@@ -10,10 +10,10 @@ const MyProfile = () => {
     const [image, setImage] = useState(false)
     const [tab, setTab] = useState('profile'); // 'profile' or 'reports'
     const [uploadedReports, setUploadedReports] = useState([]);
+    const [file, setFile] = useState(null);
 
     const { token, backendUrl, userData, setUserData, loadUserProfileData } = useContext(AppContext)
 
-    console.log("userData ", userData)
     useEffect(() => {
         if (tab === 'reports') {
             loadUploadedReports();
@@ -22,7 +22,11 @@ const MyProfile = () => {
 
     const loadUploadedReports = async () => {
         try {
-            const { data } = await axios.get(`${backendUrl}/api/user/get-reports`, { headers: { token } });
+            const { data } = await axios.post(`${backendUrl}/api/user/get-reports`,
+                { userId: userData._id },
+                { headers: { token } }
+            );
+
             if (data.success) {
                 setUploadedReports(data.reports);
             } else {
@@ -34,18 +38,25 @@ const MyProfile = () => {
         }
     };
 
+
     const handleFileUpload = async (e) => {
-        const file = e.target.files[0];
         if (!file) return;
-    
+
+        // Check if the file is an image (MIME type check)
+        if (!file.type.startsWith('image/')) {
+            toast.error('Please upload an image file.');
+            e.target.value = '';  // Clear the input event
+            return;
+        }
+
         const formData = new FormData();
         formData.append('reportFile', file);
-    
+
         try {
             const { data } = await axios.post(`${backendUrl}/api/user/upload-report`, formData, { headers: { token } });
             if (data.success) {
                 toast.success('File uploaded successfully!');
-                loadUploadedReports(); // Refresh uploaded reports
+                loadUploadedReports();
             } else {
                 toast.error(data.message);
             }
@@ -53,7 +64,9 @@ const MyProfile = () => {
             console.error(error);
             toast.error('Failed to upload the file.');
         }
-    };    
+
+        e.target.value = '';
+    };
 
     // Function to update user profile data using API
     const updateUserProfileData = async () => {
@@ -184,37 +197,62 @@ const MyProfile = () => {
             )}
             {/* Previous Reports Section */}
             {tab === 'reports' && (
-                <div>
-                    {/* File Upload */}
-                    <label htmlFor="reportUpload" className="block mb-2 text-sm font-medium text-gray-700">
-                        Upload Report
-                    </label>
-                    <input
-                        id="reportUpload"
-                        type="file"
-                        onChange={handleFileUpload}
-                        className="mb-4 block w-full text-sm text-gray-500"
-                    />
+                <div className="space-y-8">
+                    <div>
+                        {/* File Upload Section */}
+                        <label htmlFor='reportUpload' className="block">
+                            <div className="inline-block relative cursor-pointer">
+                                {/* Displaying uploaded image if available */}
+                                <img
+                                    className='w-36 h-36 rounded-md opacity-75 transition-transform hover:scale-105'
+                                    src={file ? URL.createObjectURL(file) : assets.upload_image}
+                                    alt="Upload preview"
+                                />
+                                {/* Upload icon */}
+                                <img
+                                    className='w-10 h-10 absolute bottom-0 right-0 transform translate-x-1/2 translate-y-1/2 opacity-75 hover:opacity-100 transition-opacity'
+                                    src={file ? '' : assets.upload_icon}
+                                    alt="Upload icon"
+                                />
+                            </div>
+                            {/* File Input */}
+                            <input
+                                onChange={(e) => setFile(e.target.files[0])}
+                                type="file"
+                                id="reportUpload"
+                                hidden
+                            />
+                        </label>
+                        {/* Upload Button */}
+                        <div className="mt-4">
+                            <button
+                                onClick={handleFileUpload}
+                                className='border border-primary px-6 py-2 rounded-full text-primary hover:bg-primary hover:text-white transition-all'>
+                                Upload Report
+                            </button>
+                        </div>
+                    </div>
 
                     {/* Uploaded Reports List */}
-                    <h2 className="text-lg font-semibold mb-3">Uploaded Reports</h2>
+                    <h2 className="text-xl font-semibold mb-4">Uploaded Reports</h2>
                     {uploadedReports.length > 0 ? (
-                        <ul className="space-y-2">
+                        <ul className="space-y-4 h-[400px] overflow-y-auto flex flex-wrap justify-start gap-4">
                             {uploadedReports.map((report) => (
-                                <li key={report.id} className="flex items-center justify-between">
-                                    <a
-                                        href={`${backendUrl}/uploads/reports/${report.fileName}`}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="text-blue-500 underline"
-                                    >
-                                        {report.fileName}
-                                    </a>
+                                <li
+                                    key={report.id}
+                                    className="flex items-center justify-center bg-white p-4 rounded-md shadow-md hover:shadow-lg transition-shadow w-[200px] h-[200px] flex-shrink-0"
+                                >
+                                    {/* Displaying Image */}
+                                    <img
+                                        src={report}
+                                        className="w-full h-full object-cover rounded-md"
+                                        alt="Uploaded report"
+                                    />
                                 </li>
                             ))}
                         </ul>
                     ) : (
-                        <p className="text-gray-500">No previous reports available.</p> // Customized message
+                        <p className="text-gray-500">No previous reports available.</p>
                     )}
                 </div>
             )}

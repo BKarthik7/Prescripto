@@ -9,7 +9,7 @@ userRouter.post("/login", loginUser)
 
 userRouter.get("/get-profile", authUser, getProfile)
 userRouter.post("/update-profile", upload.single('image'), authUser, updateProfile)
-userRouter.get("/get-reports", authUser, getReports)
+userRouter.post("/get-reports", authUser, getReports)
 userRouter.post("/upload-report", upload1.single('reportFile'), authUser, uploadReport)
 userRouter.post("/book-appointment", authUser, bookAppointment)
 userRouter.get("/appointments", authUser, listAppointment)

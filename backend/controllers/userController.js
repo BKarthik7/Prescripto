@@ -134,29 +134,26 @@ const updateProfile = async (req, res) => {
 // API to get user reports from user data
 const getReports = async (req, res) => {
     try {
-        const { userId } = req.params;  // Using params to get the userId in case it's passed in URL
-
+        const { userId } = req.body;
         if (!userId) {
             return res.status(400).json({ success: false, message: "User ID is required" });
         }
 
-        // Assuming `reports` is an array field in userModel
         const user = await userModel.findById(userId).select('reports');
 
         if (!user) {
             return res.status(404).json({ success: false, message: "User not found" });
         }
 
-        // If there are no reports, respond with an empty array
         const reports = user.reports || [];
 
         res.json({ success: true, reports });
-
     } catch (error) {
         console.error("Error fetching user reports:", error);
         res.status(500).json({ success: false, message: "Internal server error" });
     }
-}
+};
+
 
 // API to upload user reports to cloudinary and save in user data
 const uploadReport = async (req, res) => {
