@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import doctorModel from "../models/doctorModel.js";
 import appointmentModel from "../models/appointmentModel.js";
+import userModel from "../models/userModel.js";
 
 // API for doctor Login 
 const loginDoctor = async (req, res) => {
@@ -190,6 +191,28 @@ const doctorDashboard = async (req, res) => {
     }
 }
 
+const getReports = async (req, res) => {
+    try {
+        const { userId } = req.body;
+        if (!userId) {
+            return res.status(400).json({ success: false, message: "User ID is required" });
+        }
+
+        const user = await userModel.findById(userId).select('reports');
+
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
+
+        const reports = user.reports || [];
+
+        res.json({ success: true, reports });
+    } catch (error) {
+        console.error("Error fetching user reports:", error);
+        res.status(500).json({ success: false, message: "Internal server error" });
+    }
+};
+
 export {
     loginDoctor,
     appointmentsDoctor,
@@ -199,5 +222,6 @@ export {
     appointmentComplete,
     doctorDashboard,
     doctorProfile,
-    updateDoctorProfile
+    updateDoctorProfile,
+    getReports
 }
