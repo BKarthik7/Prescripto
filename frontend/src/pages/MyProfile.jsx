@@ -201,19 +201,9 @@ const MyProfile = () => {
                     <div>
                         {/* File Upload Section */}
                         <label htmlFor='reportUpload' className="block">
-                            <div className="inline-block relative cursor-pointer">
-                                {/* Displaying uploaded image if available */}
-                                <img
-                                    className='w-36 h-36 rounded-md opacity-75 transition-transform hover:scale-105'
-                                    src={file ? URL.createObjectURL(file) : assets.upload_image}
-                                    alt="Upload preview"
-                                />
-                                {/* Upload icon */}
-                                <img
-                                    className='w-10 h-10 absolute bottom-0 right-0 transform translate-x-1/2 translate-y-1/2 opacity-75 hover:opacity-100 transition-opacity'
-                                    src={file ? '' : assets.upload_icon}
-                                    alt="Upload icon"
-                                />
+                            <div className='inline-block relative cursor-pointer'>
+                                <img className='w-36 rounded opacity-60' src={file ? URL.createObjectURL(file) : assets.upload_image} alt="" />
+                                <img className='w-10 absolute bottom-12 right-12' src={file ? '' : assets.upload_icon} alt="" />
                             </div>
                             {/* File Input */}
                             <input
