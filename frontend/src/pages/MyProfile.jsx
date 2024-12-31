@@ -38,14 +38,28 @@ const MyProfile = () => {
         }
     };
 
+    const handleOnChange = (e) => {
+        console.log(e.target.files[0]);
+        const selectedFile = e.target.files[0];
+        if (!selectedFile?.type.startsWith('image/')) {
+            toast.error('Please upload an image file.');
+            e.target.value = '';
+            return;
+        }
+        setFile(selectedFile);
+    };
 
-    const handleFileUpload = async (e) => {
-        if (!file) return;
+
+    const handleFileUpload = async () => {
+        if (!file) {
+            toast.warning('No file selected.');
+            return;
+        }
 
         // Check if the file is an image (MIME type check)
         if (!file.type.startsWith('image/')) {
             toast.error('Please upload an image file.');
-            e.target.value = '';  // Clear the input event
+            setFile(null);
             return;
         }
 
@@ -65,7 +79,8 @@ const MyProfile = () => {
             toast.error('Failed to upload the file.');
         }
 
-        e.target.value = '';
+        setFile(null);
+
     };
 
     // Function to update user profile data using API
@@ -102,7 +117,7 @@ const MyProfile = () => {
     }
 
     return userData ? (
-        <div className="max-w-lg flex flex-col gap-2 text-sm pt-5">
+        <div className="flex flex-col gap-2 text-sm pt-5">
             {/* Tabs */}
             <div className="flex space-x-4 border-b mb-4">
                 <button
@@ -207,7 +222,7 @@ const MyProfile = () => {
                             </div>
                             {/* File Input */}
                             <input
-                                onChange={(e) => setFile(e.target.files[0])}
+                                onChange={handleOnChange}
                                 type="file"
                                 id="reportUpload"
                                 hidden
@@ -226,18 +241,19 @@ const MyProfile = () => {
                     {/* Uploaded Reports List */}
                     <h2 className="text-xl font-semibold mb-4">Uploaded Reports</h2>
                     {uploadedReports.length > 0 ? (
-                        <ul className="space-y-4 h-[400px] overflow-y-auto flex flex-wrap justify-start gap-4">
-                            {uploadedReports.map((report) => (
+                        <ul className="flex flex-wrap gap-4 overflow-y-auto h-[400px]">
+                            {uploadedReports.map((report, index) => (
                                 <li
-                                    key={report.id}
-                                    className="flex items-center justify-center bg-white p-4 rounded-md shadow-md hover:shadow-lg transition-shadow w-[200px] h-[200px] flex-shrink-0"
-                                >
+                                    key={index + 1} // Use index for simplicity; can be replaced with a unique id
+                                    className="w-[200px] h-[200px] bg-white p-2 rounded-md shadow-md hover:shadow-lg transition-shadow flex items-center justify-center"
+                                ><a href={report} target="_blank" rel="noreferrer">
                                     {/* Displaying Image */}
                                     <img
                                         src={report}
                                         className="w-full h-full object-cover rounded-md"
                                         alt="Uploaded report"
                                     />
+                                </a>
                                 </li>
                             ))}
                         </ul>
