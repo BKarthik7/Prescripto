@@ -1,0 +1,7 @@
+docker build -t bkarthik7/healthcare-system .
+
+docker run -p 5173:5173 -p 5174:5174 -p 4000:4000 bkarthik7/healthcare-system
+
+docker tag bkarthik7/healthcare-system bkarthik7/healthcare-management-system:latest
+
+docker push bkarthik7/healthcare-management-system:latest
