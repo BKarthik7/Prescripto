@@ -2,6 +2,100 @@
 
 This is a comprehensive healthcare management system that includes an admin panel, frontend user interface, and backend server. The project is structured into three main directories: **admin**, **frontend**, and **backend**.
 
+## Prerequisites
+
+- **Node.js** (version 20 or later)
+- **Docker** (for running with Docker)
+
+---
+
+## Running the Project Normally
+
+### 1. Install Dependencies
+
+Navigate to each directory (`admin`, `frontend`, `backend`) and install the dependencies:
+
+```bash
+cd admin
+npm install
+
+cd ../frontend
+npm install
+
+cd ../backend
+npm install
+```
+
+### 2. Start the Development Servers
+
+In separate terminal windows, start the development servers for each part of the project:
+
+- **Start the Frontend**:
+  ```bash
+  cd frontend
+  npm run dev
+  ```
+
+- **Start the Admin Panel**:
+  ```bash
+  cd ../admin
+  npm run dev -- --port 5174
+  ```
+
+- **Start the Backend Server**:
+  ```bash
+  cd ../backend
+  npm run start
+  ```
+
+### 3. Access the Application
+
+- **Frontend**: [http://localhost:5173](http://localhost:5173)
+- **Admin Panel**: [http://localhost:5174](http://localhost:5174)
+- **Backend**: [http://localhost:5000](http://localhost:5000)
+
+---
+
+## Running the Project with Docker
+
+### 1. Pull the Docker Image
+
+First, pull the pre-built Docker image from the repository:
+
+```bash
+docker pull bkarthik7/healthcare-management-system:latest
+```
+
+### 2. Build the Docker Image
+
+Build the Docker image using the provided `Dockerfile`:
+
+```bash
+docker build -t bkarthik7/healthcare-system .
+```
+
+### 3. Run the Docker Container
+
+Run the Docker container with the necessary ports exposed:
+
+```bash
+docker run -p 5173:5173 -p 5174:5174 -p 4000:4000 bkarthik7/healthcare-system
+```
+
+### 4. Access the Application
+
+- **Frontend**: [http://localhost:5173](http://localhost:5173)
+- **Admin Panel**: [http://localhost:5174](http://localhost:5174)
+- **Backend**: [http://localhost:4000](http://localhost:4000)
+
+---
+
+## Contributing
+
+Contributions are welcome! Please open an issue or submit a pull request for any improvements or bug fixes.
+
+---
+
 ## Project Structure
 
 ```
@@ -108,96 +202,3 @@ This is a comprehensive healthcare management system that includes an admin pane
 │   └── vite.config.js
 └── Readme.md
 ```
-
-## Prerequisites
-
-- **Node.js** (version 20 or later)
-- **Docker** (for running with Docker)
-
----
-
-## Running the Project Normally
-
-### 1. Install Dependencies
-
-Navigate to each directory (`admin`, `frontend`, `backend`) and install the dependencies:
-
-```bash
-cd admin
-npm install
-
-cd ../frontend
-npm install
-
-cd ../backend
-npm install
-```
-
-### 2. Start the Development Servers
-
-In separate terminal windows, start the development servers for each part of the project:
-
-- **Start the Frontend**:
-  ```bash
-  cd frontend
-  npm run dev
-  ```
-
-- **Start the Admin Panel**:
-  ```bash
-  cd ../admin
-  npm run dev -- --port 5174
-  ```
-
-- **Start the Backend Server**:
-  ```bash
-  cd ../backend
-  npm run start
-  ```
-
-### 3. Access the Application
-
-- **Frontend**: [http://localhost:5173](http://localhost:5173)
-- **Admin Panel**: [http://localhost:5174](http://localhost:5174)
-- **Backend**: [http://localhost:5000](http://localhost:5000)
-
----
-
-## Running the Project with Docker
-
-### 1. Pull the Docker Image
-
-First, pull the pre-built Docker image from the repository:
-
-```bash
-docker pull bkarthik7/healthcare-management-system:latest
-```
-
-### 2. Build the Docker Image
-
-Build the Docker image using the provided `Dockerfile`:
-
-```bash
-docker build -t bkarthik7/healthcare-system .
-```
-
-### 3. Run the Docker Container
-
-Run the Docker container with the necessary ports exposed:
-
-```bash
-docker run -p 5173:5173 -p 5174:5174 -p 4000:4000 bkarthik7/healthcare-system
-```
-
-### 4. Access the Application
-
-- **Frontend**: [http://localhost:5173](http://localhost:5173)
-- **Admin Panel**: [http://localhost:5174](http://localhost:5174)
-- **Backend**: [http://localhost:4000](http://localhost:4000)
-
----
-
-## Contributing
-
-Contributions are welcome! Please open an issue or submit a pull request for any improvements or bug fixes.
-
