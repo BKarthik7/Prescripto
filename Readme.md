@@ -8,6 +8,42 @@ This is a comprehensive healthcare management system that includes an admin pane
 - **Docker** (for running with Docker)
 
 ---
+## Set envs
+
+### **1. Admin `.env` File**
+
+```env
+# Admin Section
+VITE_BACKEND_URL='http://localhost:4000'
+VITE_CURRENCY="₹"
+```
+
+### **2. Frontend `.env` File**
+
+```env
+# Frontend Section
+VITE_BACKEND_URL='http://localhost:4000'
+VITE_RAZORPAY_KEY_ID="rzp_live_dummykeyid"
+```
+
+### **3. Backend `.env` File**
+
+```env
+# Backend Section
+MONGODB_URI='mongodb+srv://username:password@cluster0.dummy.mongodb.net'
+CLOUDINARY_NAME='dummycloudname'
+CLOUDINARY_API_KEY='dummyapikey123456'
+CLOUDINARY_SECRET_KEY='dummysecretkey987654'
+ADMIN_EMAIL='admin@dummyemail.com'
+ADMIN_PASSWORD='dummyadminpassword'
+JWT_SECRET='dummyjwtsecretkey'
+RAZORPAY_KEY_ID='rzp_live_dummyrzpkeyid'
+RAZORPAY_KEY_SECRET='dummyrazorpaysecretkey'
+CURRENCY='INR'
+STRIPE_SECRET_KEY='sk_test_dummystripekey'
+```
+
+---
 
 ## Running the Project Normally
 
